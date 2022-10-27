@@ -1,10 +1,9 @@
 import { Exclude, Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { Account } from './../account.entity';
+import { Account } from '../account.entity';
 
 export class AccountResponseDto {
   @Exclude() private readonly _id: number;
-  @Exclude() private readonly _walletId: number;
   @Exclude() private readonly _address: string;
   @Exclude() private readonly _privateKey: string;
   @Exclude() private readonly _publicKey: string;
@@ -13,7 +12,6 @@ export class AccountResponseDto {
 
   constructor(account: Account) {
     this._id = account.id;
-    this._walletId = account.walletId;
     this._address = account.address;
     this._privateKey = account.privateKey;
     this._publicKey = account.publicKey;
@@ -25,11 +23,6 @@ export class AccountResponseDto {
   @Expose()
   get id(): number {
     return this._id;
-  }
-  @ApiProperty({ description: '지갑 아이디' })
-  @Expose()
-  get walletId(): number {
-    return this._walletId;
   }
   @ApiProperty({ description: '주소' })
   @Expose()

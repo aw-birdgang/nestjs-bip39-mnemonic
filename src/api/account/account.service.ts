@@ -6,40 +6,28 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Account } from './account.entity';
 import { isEmpty } from '../../common/util/is-empty';
-import { EtherWalletService } from './ether-wallet.service';
-import {UpdateWalletAccountIsUseRequestDto} from "./dto/update-wallet-account-isuse-request.dto";
-import {CreateAccountRequestDto} from "./dto/create-account-request.dto";
+import {UpdateAccountRequestDto} from "./dto/update-account-request.dto";
 
 @Injectable()
-export class EtherWalletAccountService {
+export class AccountService {
   constructor(
-    @InjectRepository(Account)
-    private accountRepository: Repository<Account>,
-    private walletService: EtherWalletService,
+      @InjectRepository(Account)
+      private accountRepository: Repository<Account>,
   ) {}
 
-  private readonly logger = new Logger(EtherWalletAccountService.name);
+  private readonly logger = new Logger(AccountService.name);
 
-  async findAllWalletAccount(walletId: number): Promise<Account[]> {
-    return this.findAllAccountByWalletId(walletId);
+  async findAll(): Promise<Account[]> {
+    this.logger.debug('AccountService > findAll');
+    return this.accountRepository.find();
   }
 
   async findOneAccountNotUsed(): Promise<Account> {
     return this.findOneAccountByIsUse(0);
   }
 
-  async createAccountOnWallet(
-    requestDto: CreateAccountRequestDto,
-  ): Promise<Account> {
-    const walletId = requestDto.walletId;
-    const childNumber = requestDto.childNumber;
-    this.logger.debug('createAccountOnWallet > walletId :: ' + walletId);
-    this.logger.debug('createAccountOnWallet > childNumber :: ' + childNumber);
-
-    const existedWallet = await this.walletService.findWalletById(walletId);
-    const mnemonic = existedWallet.mnemonic;
-    this.logger.debug('createAccountOnWallet > mnemonic :: ' + mnemonic);
-
+  async createAccount(mnemonic: string, childNumber: number): Promise<Account> {
+    this.logger.debug('createAccount > mnemonic :: ' + mnemonic);
     const validate = bip39.validateMnemonic(mnemonic);
     if (!validate) {
       this.logger.debug('validate :: ' + validate);
@@ -58,13 +46,12 @@ export class EtherWalletAccountService {
     const hdWallet = hdNode.getWallet();
     this.logger.debug('wallet.getAddress() :: ' + hdWallet.getAddressString());
     this.logger.debug(
-      'wallet.getPublicKeyString() :: ' + hdWallet.getPublicKeyString(),
+        'wallet.getPublicKeyString() :: ' + hdWallet.getPublicKeyString(),
     );
     this.logger.debug(
-      'wallet.getPrivateKey() :: ' + hdWallet.getPrivateKeyString(),
+        'wallet.getPrivateKey() :: ' + hdWallet.getPrivateKeyString(),
     );
     const account = new Account();
-    account.walletId = walletId;
     account.childNumber = childNumber;
     account.address = hdWallet.getAddressString();
     account.privateKey = hdWallet.getPrivateKeyString();
@@ -72,16 +59,6 @@ export class EtherWalletAccountService {
 
     const created = this.accountRepository.create(Account.of(account));
     return this.accountRepository.save(created);
-  }
-
-  private async findAllAccountByWalletId(walletId: number): Promise<Account[]> {
-    const accounts = await this.accountRepository.find({
-      where: { walletId: walletId },
-    });
-    if (isEmpty(accounts) === true || accounts.length <= 0) {
-      throw new NotFoundException(Message.NOT_FOUND_ACCOUNT);
-    }
-    return accounts;
   }
 
   private async findAccountById(id: number): Promise<Account> {
@@ -104,6 +81,16 @@ export class EtherWalletAccountService {
     return account;
   }
 
+  async findLastOneAccount(): Promise<Account> {
+    const account = await this.accountRepository.find({
+      order: { childNumber: 'DESC' }
+    });
+    // if (isEmpty(account) === true) {
+    //   throw new NotFoundException(Message.NOT_FOUND_ACCOUNT);
+    // }
+    return account[0];
+  }
+
   private async findOneAccountByIsUse(isUse: number): Promise<Account> {
     const account = await this.accountRepository.findOne({
       where: { isUse: isUse },
@@ -115,8 +102,8 @@ export class EtherWalletAccountService {
   }
 
   async updateAccountIsUse(
-    id: number,
-    requestDto: UpdateWalletAccountIsUseRequestDto,
+      id: number,
+      requestDto: UpdateAccountRequestDto,
   ): Promise<Account> {
     return this.updateAccountIsUseById(id, requestDto.isUse);
   }
@@ -128,11 +115,17 @@ export class EtherWalletAccountService {
   }
 
   async updateAccountIsUseByAddress(
-    address: string,
-    isUse: number,
+      address: string,
+      isUse: number,
   ): Promise<Account> {
     const account = await this.findAccountByAddress(address);
     account.updateIsUse(isUse);
     return this.accountRepository.save(account);
   }
+
+  async deleteAccount(id: number): Promise<void> {
+    await this.accountRepository.delete(id);
+  }
+
+
 }

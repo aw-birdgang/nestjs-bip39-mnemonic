@@ -1,6 +1,6 @@
 {
   "name": "nestjs-bip39-mnemonic",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
   "author": "",
   "private": true,
@@ -53,7 +53,7 @@
     "ethereumjs-wallet": "^1.0.2",
     "ethers": "^5.6.9",
     "graphql-request": "^5.0.0",
-    "graphtype": "^0.0.10",
+    "graphtype": "^0.0.1",
     "hbs": "^4.2.0",
     "hdkey": "^2.0.1",
     "lodash": "^4.17.21",
@@ -63,7 +63,7 @@
     "multer-s3": "^3.0.1",
     "mysql": "^2.18.1",
     "nestjs-ethers": "^1.0.2",
-    "passport": "^0.5.3",
+    "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.7.3",
@@ -114,7 +114,7 @@
     "ts-loader": "^9.2.7",
     "ts-node": "^10.6.0",
     "tsconfig-paths": "^3.12.0",
-    "typescript": "^4.6.2",
+    "typescript": "4.7.4",
     "web3": "^1.7.4"
   },
   "jest": {

@@ -19,6 +19,12 @@ export class Deposit {
     @ApiProperty({ description: '수량' })
     amount: number;
 
+    // 0 : 입금 요청
+    // 1 : 입금 완료
+    @Column()
+    @ApiProperty({ description: '상태' })
+    state: number;
+
     @Column()
     @ApiProperty({ description: '입금 주소' })
     depositAddress: string;

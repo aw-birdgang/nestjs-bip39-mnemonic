@@ -5,7 +5,8 @@ import {ConfigModule} from "../../config";
 import { Deposit } from './deposit.entity';
 import {DepositService} from "./deposit.service";
 import {DepositController} from "./deposit.controller";
-import {EtherWalletModule} from "../wallet/ether-wallet.module";
+import {AccountModule} from "../account/account.module";
+import {MoralisModule, MoralisService} from "../../moralis";
 
 @Module({
     imports: [
@@ -16,7 +17,8 @@ import {EtherWalletModule} from "../wallet/ether-wallet.module";
             ignoreUserAgents: [/throttler-test/g],
         }),
         ConfigModule,
-        EtherWalletModule
+        AccountModule,
+        MoralisModule
     ],
     controllers: [DepositController],
     providers: [DepositService],

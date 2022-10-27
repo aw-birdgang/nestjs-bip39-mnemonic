@@ -8,18 +8,14 @@ export class Account {
   id: number;
 
   @Column()
-  @ApiProperty({ description: '지갑 아이디' })
-  walletId: number;
-
-  @Column()
   @ApiProperty({ description: '지갑 주소' })
   address: string;
 
-  @Column()
+  @Column({ unique: true })
   @ApiProperty({ description: '개인 키' })
   privateKey: string;
 
-  @Column()
+  @Column({ unique: true })
   @ApiProperty({ description: '공개 키' })
   publicKey: string;
 
