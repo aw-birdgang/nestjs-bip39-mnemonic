@@ -34,14 +34,16 @@ export class RolesGuard implements CanActivate {
       ROLES_KEY,
       [context.getHandler(), context.getClass()],
     );
-    if (
-      !requiredRoles ||
-      convertToNumber(requiredRoles.toString()) >= UserRole.NONE.valueOf()
-    ) {
-      this.logger.debug('enough permission for call');
-      return true;
-    }
-    this.logger.debug('requiredRoles.toString() : ' + requiredRoles.toString());
+
+    this.logger.debug('requiredRoles : ' + requiredRoles.toString());
+    // if (
+    //   !requiredRoles
+    //     ||
+    //   convertToNumber(requiredRoles.toString()) >= UserRole.NONE.valueOf()
+    // ) {
+    //   this.logger.debug('enough permission for call');
+    //   return true;
+    // }
     const request = context.switchToHttp().getRequest();
     this.logger.debug(
       'request info : ' +
@@ -54,7 +56,7 @@ export class RolesGuard implements CanActivate {
     try {
       const token = extractToken(request.headers.authorization);
       const exist = this.authService.validate(token);
-      this.logger.debug(' exist : ' + exist);
+      this.logger.debug(' exist : ' + exist + " , token : " + token);
       if (!token || !exist) {
         throw new UnauthorizedException();
       }

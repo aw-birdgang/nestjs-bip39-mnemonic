@@ -1,0 +1,20 @@
+@startuml
+
+actor actor #red
+participant chat_bot
+participant server
+participant chat_bot_live
+
+actor -> chat_bot : 1. help
+chat_bot --> actor : 1.입금 하기, \n2.기타 문의, \n3.상담원 연결, \n4.출금 하기
+actor -> chat_bot : input user id (birdgang)
+chat_bot -> server : LINE id, user id (22, birdgang)
+server --> server : 1. create account (address, private key) \n2. save LINE id, user id, deposit address, private key
+server --> chat_bot : deposit address.
+chat_bot --> actor : 1.deposit address. \n2.deposit confirm
+
+actor -> chat_bot: deposit confirm
+chat_bot --> actor: chat_bot_live link
+actor <--> chat_bot_live: chat.
+
+@enduml

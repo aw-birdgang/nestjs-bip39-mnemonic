@@ -34,8 +34,8 @@ export class DepositController {
 
     private readonly logger = new Logger(DepositController.name);
 
-    @Get('deposit')
-    @Roles(UserRole.CUSTOMER)
+    @Get()
+    @Roles(UserRole.ADMIN)
     @ApiOperation({ summary: '모든 입금 정보 조회 API' })
     @ApiOkResponse({
         description: '모든 입금 정보 한다.',
@@ -48,7 +48,7 @@ export class DepositController {
     }
 
 
-    @Post('deposit')
+    @Post()
     @Roles(UserRole.ADMIN)
     @ApiOperation({
         summary: '입금 정보 생성 API',
@@ -67,7 +67,7 @@ export class DepositController {
         return res.status(HttpStatus.CREATED).json(instanceToPlain(deposit));
     }
 
-    @Delete('deposit/:id')
+    @Delete(':id')
     @Roles(UserRole.ADMIN)
     @ApiOperation({ summary: '입금 정보 삭제 API' })
     @ApiNoContentResponse({

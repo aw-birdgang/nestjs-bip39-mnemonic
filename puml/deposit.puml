@@ -1,0 +1,20 @@
+@startuml
+
+actor actor #red
+participant service
+participant leader
+participant parser_server
+
+
+service -> leader : 1. request deposit. \n(including userId, amount)
+leader --> leader : 2. generate deposit address \n& save with request data.
+leader --> parser_server : 3. register deposit address on parser server.
+leader --> service : 4. response deposit address \nand other info.
+service --> service : 5. update UI show deposit address.
+
+actor -> service: 6. transfer token to deposit address.
+parser_server --> leader : 7. callback transfer event.
+leader --> service : 8. delivery transfer event.
+service --> service : 9. update user balance.
+
+@enduml

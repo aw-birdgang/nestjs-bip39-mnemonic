@@ -7,6 +7,9 @@ import { MySQLModule } from './database/mysql.module';
 import {HealthModule} from "./api/health/health.module";
 import { DepositModule } from './api/deposit/deposit.module';
 import {MoralisModule} from "./moralis";
+import {APP_FILTER, APP_GUARD} from "@nestjs/core";
+import {RolesGuard} from "./api/auth/guard/role.guard";
+import {AllExceptionsFilter} from "./filters/all-exceptions.filter";
 
 @Module({
   imports: [
@@ -17,6 +20,16 @@ import {MoralisModule} from "./moralis";
     AccountModule,
     DepositModule,
     MoralisModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule implements NestModule {
